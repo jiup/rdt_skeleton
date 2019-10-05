@@ -14,8 +14,8 @@ class RdtSession {
 
     double simulationTime = 1000;           /* total simulation time */
     double messageInterval = 0.2;           /* intervals between upper messages arrival */
-    int averageMessageSize = 20;           /* average size of messages (in bytes) */
-    double averagePacketLatency = 0.1;      /* average one-way latency (in seconds) */
+    int averageMessageSize = 100;           /* average size of messages (in bytes) */
+    double averagePacketLatency = 0.2;      /* average one-way latency (in seconds) */
     double outOfOrderRate = 0.2;            /* probability of abnormal latency */
     double lossRate = 0.2;                  /* probability of packet loss */
     double corruptRate = 0.2;               /* probability of packet corruption */
@@ -36,6 +36,7 @@ class RdtSession {
     void schedule(Event e) {
         if (e.getScheduledTime() < time) return;
         events.add(e);
+        time += 0.001;
     }
 
     void cancel(Event e) {

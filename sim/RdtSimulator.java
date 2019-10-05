@@ -115,28 +115,31 @@ public class RdtSimulator {
         byte[] message = e.getMessage();
         session.counter.delivered += message.length;
         if (!validateMessage(message))
-            ;// System.err.println("corrupted message: " + new String(message, StandardCharsets.UTF_8));
+            System.err.println("corrupted message: " + new String(message, StandardCharsets.UTF_8));
     }
 
     /* NOTE: change this part if you want to generate different messages for
        testing. we will certainly use different messages in our grading! */
+    private static int c1 = 0;
     private byte[] generateMessage(int size) {
         byte[] bytes = new byte[size];
-        for (int i = 0; i < size; i++) {
-            bytes[i] = (byte) ('0' + (i % 10));
+        for (int i = 0; i < size; i++, c1 = (c1 + 1) % 10) {
+            bytes[i] = (byte) ('0' + c1);
         }
         return bytes;
     }
 
     /* NOTE: change this part if you want to generate different messages for
        testing. we will certainly use different messages in our grading! */
+    private static int c2 = 0;
     private boolean validateMessage(byte[] message) {
-        for (int i = 0; i < message.length; i++) {
-            if (message[i] != (byte) '0' + (i % 10)) {
+        boolean ret = true;
+        for (int i = 0; i < message.length; i++, c2 = (c2 + 1) % 10) {
+            if (message[i] != (byte) '0' + c2) {
                 session.counter.failure++;
-                return false;
+                ret = false;
             }
         }
-        return true;
+        return ret;
     }
 }
