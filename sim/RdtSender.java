@@ -7,8 +7,12 @@ import static sim.Packet.RDT_PKTSIZE;
  * @since 10/04/2019
  */
 public abstract class RdtSender {
-    RdtSession session;
-    RdtEvent.SenderTimeout timer;
+    private RdtSession session;
+    private RdtEvent.SenderTimeout timer;
+
+    void join(RdtSession session) {
+        this.session = session;
+    }
 
     /* event handler, called when a message is passed from the upper
        layer at the sender */

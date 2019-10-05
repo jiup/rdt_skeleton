@@ -24,7 +24,7 @@ public class MyRdtReceiver extends RdtReceiver {
        layer at the receiver */
     public void receiveFromLowerLayer(Packet packet) {
         /* todo: write code here... */
-        /* the following only works over a reliable channel */
+        /* modify the following to a reliable version */
 
         /* 1-byte header indicating the size of the payload */
         int header_size = 1;

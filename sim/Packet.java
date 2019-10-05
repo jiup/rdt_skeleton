@@ -9,11 +9,12 @@ import java.util.Random;
 public class Packet {
     public static final int RDT_PKTSIZE = 64;
     private static Random random = new Random();
-    
+
     public byte[] data;
 
     public Packet() {
         this.data = new byte[RDT_PKTSIZE];
+        /* initialize bytes randomly */
         random.nextBytes(this.data);
     }
 }

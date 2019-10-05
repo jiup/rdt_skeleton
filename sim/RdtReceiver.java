@@ -7,7 +7,11 @@ import static sim.Packet.RDT_PKTSIZE;
  * @since 10/04/2019
  */
 public abstract class RdtReceiver {
-    RdtSession session;
+    private RdtSession session;
+
+    void join(RdtSession session) {
+        this.session = session;
+    }
 
     /* event handler, called when a packet is passed from the lower
        layer at the receiver */

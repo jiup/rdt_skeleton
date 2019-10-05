@@ -7,7 +7,7 @@ package sim;
 abstract class Event {
     private double scheduledTime;
 
-    public Event(double scheduledTime) {
+    Event(double scheduledTime) {
         this.scheduledTime = scheduledTime;
     }
 

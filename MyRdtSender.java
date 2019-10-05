@@ -26,7 +26,7 @@ public class MyRdtSender extends RdtSender {
        layer at the sender */
     public void receiveFromUpperLayer(byte[] message) {
         /* todo: write code here... */
-        /* the following only works over a reliable channel */
+        /* modify the following to a reliable version */
 
         /* 1-byte header indicating the size of the payload */
         int header_size = 1;
@@ -59,7 +59,6 @@ public class MyRdtSender extends RdtSender {
             pkt.data[0] = (byte) (message.length - cursor);
             System.arraycopy(message, cursor, pkt.data, header_size, pkt.data[0]);
 
-            startTimer(0.1);
             /* send it out through the lower layer */
             sendToLowerLayer(pkt);
         }
@@ -69,7 +68,6 @@ public class MyRdtSender extends RdtSender {
        layer at the sender */
     public void receiveFromLowerLayer(Packet packet) {
         /* todo: write code here... */
-
     }
 
     /* event handler, called when the timer expires */
