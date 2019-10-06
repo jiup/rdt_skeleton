@@ -1,3 +1,4 @@
+SHELL = /bin/bash -o pipefail
 JC = javac
 .SUFFIXES: .java .class
 .java.class:
@@ -6,7 +7,7 @@ JC = javac
 TARGETS = rdt_sim
 
 default: .java.class
-	@echo 'java Main $$1 $$2 $$3 $$4 $$5 $$6' > rdt_sim
+	@echo 'java Main $$1 $$2 $$3 $$4 $$5 $$6 $$7' > rdt_sim
 	chmod +x rdt_sim
 
 clean:
@@ -15,16 +16,13 @@ clean:
 	$(RM) rdt_sim
 
 run:
-	./${TARGETS} 1000 0.1 20 0 0 0
+	./${TARGETS} 1000 0.1 100 0 0 0 2
 
-run-reordering:
-	./${TARGETS} 1000 0.1 100 0.02 0 0
+test:
+	./${TARGETS} 1000 0.1 100 0.2 0.2 0.2 1
 
-run-packet-loss:
-	./${TARGETS} 1000 0.1 100 0 0.02 0
-
-run-packet-corruption:
-	./${TARGETS} 1000 0.1 100 0 0 0.02
-
-run-combined:
-	./${TARGETS} 1000 0.1 100 0.02 0.02 0.02
+submission: clean
+	@read -p "your firstname? " name; \
+	(tar -cf - ./MyRdt*.java writeup.pdf | \gzip > p2j_$$name.tar.gz) \
+	|| (rm p2j_$$name.tar.gz; exit 1);
+	@echo 'done! please double check before submitting.'
