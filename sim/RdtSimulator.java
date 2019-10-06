@@ -4,7 +4,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
+ * Unreliable link simulator
+ *
  * @author Jiupeng Zhang
+ * @see RdtSession#schedule(Event)
+ * @see RdtSender
+ * @see RdtReceiver
  * @since 10/04/2019
  */
 public class RdtSimulator {
@@ -24,6 +29,9 @@ public class RdtSimulator {
         this.receiver = receiver;
     }
 
+    /**
+     * Start a simulation routine
+     */
     public void start() {
         RdtSession session = new RdtSession(0, simulationTime, messageInterval,
                 averageMessageSize, averagePacketLatency, outOfOrderRate, lossRate, corruptRate);
@@ -38,27 +46,28 @@ public class RdtSimulator {
                         "Please review these inputs and press <enter> to proceed.\n",
                 session.simulationTime, session.messageInterval, session.averageMessageSize,
                 session.outOfOrderRate * 100, session.lossRate * 100, session.corruptRate * 100);
-        new Scanner(System.in).nextLine();
+        new Scanner(System.in).nextLine(); // waiting for input
 
         sender.join(session);
         receiver.join(session);
-        session.schedule(new RdtEvent.SenderFromUpperLayer(0));
+        session.schedule(new RdtEvent.SenderFromUpperLayer(0)); // fuze event
         while (session.hasNext()) {
             Event e = session.next();
 
-            if (e.getClass() == RdtEvent.SenderFromUpperLayer.class) {
+            if (e.getClass() == RdtEvent.SenderFromUpperLayer.class) { // sender: upper -> rdt layer
                 RdtSession.LOG.info(String.format("Time %.2fs (Sender): the upper layer " +
                         "instructs rdt layer to send out a message.", session.getTime()));
-                int size = (int) (Math.random() * 2 * session.averageMessageSize);
-                byte[] message = generateMessage(size);
+                // randomize upper-level message to be sent
+                byte[] message = generateMessage((int) (Math.random() * 2 * session.averageMessageSize));
                 session.counter.sent += message.length;
                 sender.receiveFromUpperLayer(message);
                 if (session.getTime() < session.simulationTime) {
+                    // reuse `e` to schedule a recurring event after `messageInterval`
                     e.reschedule(session.getTime() + Math.random() * 2 * session.messageInterval);
                     session.schedule(e);
                 }
 
-            } else if (e.getClass() == RdtEvent.SenderFromLowerLayer.class) {
+            } else if (e.getClass() == RdtEvent.SenderFromLowerLayer.class) { // sender: rdt layer <- lower
                 RdtSession.LOG.info(String.format("Time %.2fs (Sender): the lower layer informs " +
                         "the rdt layer that a packet is received from the link.", session.getTime()));
                 sender.receiveFromLowerLayer(((RdtEvent.SenderFromLowerLayer) e).getPacket());
@@ -67,12 +76,12 @@ public class RdtSimulator {
                 RdtSession.LOG.info(String.format("Time %.2fs (Sender): the timer expires.", session.getTime()));
                 sender.onTimeout();
 
-            } else if (e.getClass() == RdtEvent.ReceiverFromLowerLayer.class) {
+            } else if (e.getClass() == RdtEvent.ReceiverFromLowerLayer.class) { // receiver: lower -> rdt layer
                 RdtSession.LOG.info(String.format("Time %.2fs (Receiver): the lower layer informs " +
                         "the rdt layer that a packet is received from the link.", session.getTime()));
                 receiver.receiveFromLowerLayer(((RdtEvent.ReceiverFromLowerLayer) e).getPacket());
 
-            } else if (e.getClass() == RdtEvent.ReceiverToUpperLayer.class) {
+            } else if (e.getClass() == RdtEvent.ReceiverToUpperLayer.class) { // receiver: rdt layer -> upper
                 byte[] message = ((RdtEvent.ReceiverToUpperLayer) e).getMessage();
                 session.counter.delivered += message.length;
                 if (!validateMessage(message)) {
@@ -88,11 +97,10 @@ public class RdtSimulator {
                         "\t%d packets passed between the sender and the receiver\n",
                 session.getTime(), session.counter.sent, session.counter.delivered, session.counter.packetPassed);
 
-        if (session.counter.failure == 0 && session.counter.sent == session.counter.delivered) {
+        if (session.counter.failure == 0 && session.counter.sent == session.counter.delivered)
             System.out.println("## Congratulations! This session is error-free, loss-free, and in order.\n");
-        } else {
+        else
             System.out.println("## Something is wrong! This session is NOT error-free, loss-free, and in order.\n");
-        }
     }
 
     public void setSimulationTime(double simulationTime) {
@@ -119,8 +127,10 @@ public class RdtSimulator {
         this.corruptRate = corruptRate;
     }
 
-    /* NOTE: change this part if you want to generate different messages for
-       testing. we will certainly use different messages in our grading! */
+    /**
+     * NOTE: change the following part if you want different messages for
+     * testing. we will certainly use different messages in our grading!
+     */
     private static int c1 = 0;
     private byte[] generateMessage(int size) {
         byte[] bytes = new byte[size];
@@ -130,8 +140,6 @@ public class RdtSimulator {
         return bytes;
     }
 
-    /* NOTE: change this part if you want to generate different messages for
-       testing. we will certainly use different messages in our grading! */
     private static int c2 = 0;
     private boolean validateMessage(byte[] message) {
         boolean res = true;

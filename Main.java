@@ -5,12 +5,14 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 
 /**
+ * Main routine to run the simulator
+ *
  * @author Jiupeng Zhang
  * @since 10/04/2019
  */
 public class Main {
     static {
-        System.setProperty("java.util.logging.SimpleFormatter.format", "%4$-7s %5$s %n");
+        System.setProperty("java.util.logging.SimpleFormatter.format", "%4$-7s %5$s %n"); // set logging format
     }
 
     private static void setLogLevel(Level level) {
@@ -21,12 +23,12 @@ public class Main {
         RdtSimulator simulator = new RdtSimulator(new MyRdtSender(), new MyRdtReceiver());
         if (args.length > 0) {
             try {
-                simulator.setSimulationTime(Double.parseDouble(args[0]));      /* total simulation time */
-                simulator.setMessageInterval(Double.parseDouble(args[1]));     /* intervals between messages arrival */
-                simulator.setAverageMessageSize(Integer.parseInt(args[2]));    /* average size of messages (in bytes) */
-                simulator.setOutOfOrderRate(Double.parseDouble(args[3]));      /* probability of abnormal latency */
-                simulator.setLossRate(Double.parseDouble(args[4]));            /* probability of packet loss */
-                simulator.setCorruptRate(Double.parseDouble(args[5]));         /* probability of packet corruption */
+                simulator.setSimulationTime(Double.parseDouble(args[0]));    // total simulation time
+                simulator.setMessageInterval(Double.parseDouble(args[1]));   // intervals between messages arrival
+                simulator.setAverageMessageSize(Integer.parseInt(args[2]));  // average size of messages (in bytes)
+                simulator.setOutOfOrderRate(Double.parseDouble(args[3]));    // probability of abnormal latency
+                simulator.setLossRate(Double.parseDouble(args[4]));          // probability of packet loss
+                simulator.setCorruptRate(Double.parseDouble(args[5]));       // probability of packet corruption
                 if (args.length > 6) {
                     switch (args[6]) {
                         case "0": setLogLevel(Level.OFF); break;

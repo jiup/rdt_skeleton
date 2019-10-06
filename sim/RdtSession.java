@@ -5,7 +5,10 @@ import java.util.PriorityQueue;
 import java.util.logging.Logger;
 
 /**
+ * Reliable data transfer session
+ *
  * @author Jiupeng Zhang
+ * @see RdtEvent
  * @since 10/04/2019
  */
 class RdtSession {
@@ -20,7 +23,7 @@ class RdtSession {
 
     Counter counter;
     private PriorityQueue<Event> events;
-    private double time;
+    private double time; // virtual time
 
     int averageMessageSize;
     double simulationTime, messageInterval, averagePacketLatency, outOfOrderRate, lossRate, corruptRate;
@@ -41,9 +44,9 @@ class RdtSession {
     }
 
     void schedule(Event e) {
-        if (e.getScheduledTime() < time) return;
+        if (e.getScheduledTime() < time) return; // ignore pass events
         events.add(e);
-        time += .00001;
+        time += .00001; // avoid scheduling conflicts
     }
 
     void cancel(Event e) {

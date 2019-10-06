@@ -1,6 +1,8 @@
 package sim;
 
 /**
+ * Simulation event base
+ *
  * @author Jiupeng Zhang
  * @since 10/04/2019
  */
