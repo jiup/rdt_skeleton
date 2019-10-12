@@ -53,7 +53,7 @@ public abstract class RdtReceiver {
             latency *= Math.random() * 2;
         }
 
-        session.schedule(new RdtEvent.ReceiverFromLowerLayer(packet, session.getTime() + latency));
+        session.schedule(new RdtEvent.SenderFromLowerLayer(packet, session.getTime() + latency));
         session.counter.packetPassed++;
     }
 

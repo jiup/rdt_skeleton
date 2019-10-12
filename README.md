@@ -1,7 +1,10 @@
+## Revisions
+10/12 - Fixed typo, please `checkout` to the latest version.
+
 ## Quick Start
 - Clone the repo by `git clone https://github.com/jiup/rdt_skeleton.git`.
 - Run `make` to compile the code.
-- Execute `rdt_sim 1000 0.1 100 0 0 0 0`.
+- Execute `./rdt_sim 1000 0.1 100 0 0 0 0`.
 
 The RDT layer is implemented in `MyRdtSender.java` and `MyRdtReceiver`, The current implementation assumes there is no packet loss, corruption, or reordering in the underlying link medium. You will need to enhance the implementation to deal with all these situations. In general, you are not supposed to change sourcecode under the folder `sim`.
 
