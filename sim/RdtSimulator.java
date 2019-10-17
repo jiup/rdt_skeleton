@@ -1,6 +1,5 @@
 package sim;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
@@ -17,7 +16,7 @@ public class RdtSimulator {
     private RdtReceiver receiver;
 
     double simulationTime = 1000;           /* total simulation time */
-    double messageInterval = 0.2;           /* intervals between upper messages arrival */
+    double messageInterval = 0.1;           /* intervals between upper messages arrival */
     int averageMessageSize = 100;           /* average size of messages (in bytes) */
     double averagePacketLatency = 0.2;      /* average one-way latency (in seconds) */
     double outOfOrderRate = 0.2;            /* probability of abnormal latency */
@@ -80,15 +79,6 @@ public class RdtSimulator {
                 RdtSession.LOG.info(String.format("Time %.2fs (Receiver): the lower layer informs " +
                         "the rdt layer that a packet is received from the link.", session.getTime()));
                 receiver.receiveFromLowerLayer(((RdtEvent.ReceiverFromLowerLayer) e).getPacket());
-
-            } else if (e.getClass() == RdtEvent.ReceiverToUpperLayer.class) { // receiver: rdt layer -> upper
-                byte[] message = ((RdtEvent.ReceiverToUpperLayer) e).getMessage();
-                session.counter.delivered += message.length;
-                if (!validateMessage(message)) {
-                    session.counter.failure++;
-                    RdtSession.LOG.severe(String.format("Time %.2fs (Receiver): delivered corrupted " +
-                            "message \"%s\"", session.getTime(), new String(message, StandardCharsets.UTF_8)));
-                }
             }
         }
 
@@ -138,14 +128,5 @@ public class RdtSimulator {
             bytes[i] = (byte) ('0' + c1);
         }
         return bytes;
-    }
-
-    private static int c2 = 0;
-    private boolean validateMessage(byte[] message) {
-        boolean res = true;
-        for (int i = 0; i < message.length; i++, c2 = (c2 + 1) % 10) {
-            if (message[i] != (byte) '0' + c2) res = false;
-        }
-        return res;
     }
 }

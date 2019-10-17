@@ -1,5 +1,7 @@
 package sim;
 
+import java.nio.charset.StandardCharsets;
+
 import static sim.Packet.RDT_PKTSIZE;
 
 /**
@@ -60,8 +62,18 @@ public abstract class RdtReceiver {
     /**
      * Deliver a message to the upper layer at the receiver
      */
+    int c2 = 0; // validate delivered message
+
     public void sendToUpperLayer(byte[] message) {
         if (session == null) throw new IllegalStateException("session not registered");
-        session.schedule(new RdtEvent.ReceiverToUpperLayer(message, session.getTime()));
+
+        for (int i = 0; i < message.length; i++, c2 = (c2 + 1) % 10) {
+            if (message[i] != (byte) '0' + c2) {
+                session.counter.failure++;
+                RdtSession.LOG.severe(String.format("Time %.2fs (Receiver): delivered corrupted " +
+                        "message \"%s\"", session.getTime(), new String(message, StandardCharsets.UTF_8)));
+            }
+        }
+        session.counter.delivered += message.length;
     }
 }
