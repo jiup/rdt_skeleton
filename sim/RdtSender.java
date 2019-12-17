@@ -1,5 +1,7 @@
 package sim;
 
+import java.util.Arrays;
+
 import static sim.Packet.RDT_PKTSIZE;
 
 /**
@@ -86,6 +88,9 @@ public abstract class RdtSender {
 
         // packet corrupted at corruptRate
         if (Math.random() < session.corruptRate) {
+            Packet pkt = new Packet();
+            pkt.data = Arrays.copyOf(packet.data, packet.data.length);
+            packet = pkt;
             for (int i = 0; i < RDT_PKTSIZE; i++) {
                 packet.data[i] += Math.random() * 20 - 10;
             }

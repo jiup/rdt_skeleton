@@ -61,7 +61,7 @@ class RdtSession {
         if (events.isEmpty()) return null;
 
         Event e = events.poll();
-        time = e.getScheduledTime();
+        time = Math.max(time, e.getScheduledTime());
         return e;
     }
 
